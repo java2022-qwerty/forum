@@ -27,7 +27,6 @@ public class PostController {
 
 	final PostService service;
 
-
 	@PostMapping("/post/{author}")
 	public PostDto addPost(@RequestBody NewPostDto newPost, @PathVariable String author) {
 		return service.addNewPost(newPost, author);
@@ -64,12 +63,12 @@ public class PostController {
 	public Iterable<PostDto> getPostsByAuthor(@PathVariable("author") String name) {
 		return service.findPostsByAuthor(name);
 	}
-	
+
 	@PostMapping("/posts/tags")
 	public Iterable<PostDto> findPostsByTags(@RequestBody List<String> tags) {
 		return service.findPostsByTags(tags);
 	}
-	
+
 	@PostMapping("/posts/period")
 	public Iterable<PostDto> findPostsByDate(@RequestBody DatePeriodDto datePeriodDto) {
 		return service.findPostsByDates(datePeriodDto);

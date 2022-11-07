@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = { "id" })
 @Document(collection = "Posts")
 public class Post {
 	String id;
