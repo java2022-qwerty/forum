@@ -14,8 +14,6 @@ import telran.java2022.login.dto.LoginAndChangePassDto;
 import telran.java2022.login.dto.UpdateNameDto;
 import telran.java2022.login.dto.UserDto;
 import telran.java2022.login.service.LoginService;
-import telran.java2022.post.dto.NewPostDto;
-import telran.java2022.post.dto.PostDto;
 
 @RestController
 @RequiredArgsConstructor
