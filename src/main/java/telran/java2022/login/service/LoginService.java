@@ -10,7 +10,8 @@ public interface LoginService {
 
 	UserDto addNewUser(CreateUserDto createUserDto);
 
-	UserDto loginUser(LoginAndChangePassDto loginAndChangePassDto);
+	UserDto loginUser(String user);
+
 
 	UserDto removeUser(String user);
 

@@ -1,4 +1,4 @@
-package telran.java2022.post.model;
+package telran.java2022.login.model;
 
 import java.util.HashSet;
 import java.util.Set;

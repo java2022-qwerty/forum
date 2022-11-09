@@ -12,8 +12,7 @@ import telran.java2022.login.dto.UpdateNameDto;
 import telran.java2022.login.dto.UserDto;
 import telran.java2022.login.dto.exception.UserAlreadyExistException;
 import telran.java2022.login.dto.exception.UserNotFoundException;
-import telran.java2022.login.dto.exception.UserWrongPasswordException;
-import telran.java2022.post.model.User;
+import telran.java2022.login.model.User;
 
 @Service
 @RequiredArgsConstructor
@@ -34,16 +33,13 @@ public class LoginServiceImpl implements LoginService {
 
 		return modelMapper.map(user, UserDto.class);
 	}
-
+	
 	@Override
-	public UserDto loginUser(LoginAndChangePassDto loginAndChangePassDto) {
-		String loginString = loginAndChangePassDto.getLogin();
-		User user = userRepository.findById(loginString).orElseThrow(() -> new UserNotFoundException(loginString));
-		if (!user.getPassword().equals(loginAndChangePassDto.getPassword())) {
-			throw new UserWrongPasswordException(loginString);
-		}
+	public UserDto loginUser(String login) {
+		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		return modelMapper.map(user, UserDto.class);
 	}
+	
 
 	@Override
 	public UserDto removeUser(String login) {

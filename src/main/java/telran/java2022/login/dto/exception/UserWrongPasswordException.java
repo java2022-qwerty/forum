@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@ResponseStatus(HttpStatus.FORBIDDEN)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class UserWrongPasswordException extends RuntimeException {
 	private static final long serialVersionUID = 4387793719137314638L;
 
