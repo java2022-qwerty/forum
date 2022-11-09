@@ -33,13 +33,12 @@ public class LoginServiceImpl implements LoginService {
 
 		return modelMapper.map(user, UserDto.class);
 	}
-	
+
 	@Override
 	public UserDto loginUser(String login) {
 		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		return modelMapper.map(user, UserDto.class);
 	}
-	
 
 	@Override
 	public UserDto removeUser(String login) {

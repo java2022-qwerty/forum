@@ -12,7 +12,6 @@ public interface LoginService {
 
 	UserDto loginUser(String user);
 
-
 	UserDto removeUser(String user);
 
 	UserDto updateUser(String user, UpdateNameDto updateNameDto);

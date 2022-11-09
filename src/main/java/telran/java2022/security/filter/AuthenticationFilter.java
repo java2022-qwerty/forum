@@ -31,15 +31,12 @@ public class AuthenticationFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
 			String token = request.getHeader("Authorization");
-			if (token == null) {
-				response.sendError(401, "Wrong Header");
-				return;
-			}
 			String[] credentials = getCredentialFromToken(token);
-			User user = userRepository.findById(credentials[0])
-					.orElseThrow(() -> new UserNotFoundException(credentials[0]));
-			if (!user.getPassword().equals(credentials[1])) {
-				response.sendError(401, "Wrong password");
+			User user = userRepository.findById(credentials[0]).orElseThrow(() -> new UserNotFoundException(credentials[0]));
+			boolean checkAuth = user.getPassword().equals(credentials[1]);
+			boolean checkRole = user.getRoles().contains("USER");
+			if (token == null || !checkAuth || !checkRole) {
+				response.sendError(401, "Wrong credentials");
 				return;
 			}
 		}
