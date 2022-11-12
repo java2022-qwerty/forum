@@ -1,7 +1,6 @@
 package telran.java2022.login.controller;
 
 import java.security.Principal;
-import java.util.Base64;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import telran.java2022.login.dto.AddRoleDto;
 import telran.java2022.login.dto.CreateUserDto;
-import telran.java2022.login.dto.LoginAndChangePassDto;
 import telran.java2022.login.dto.UpdateNameDto;
 import telran.java2022.login.dto.UserDto;
 import telran.java2022.login.service.LoginService;
@@ -47,13 +45,20 @@ public class LoginController {
 	}
 
 	@DeleteMapping("/user/{user}")
-	public UserDto removeUser(@PathVariable String user) {
-		return loginService.removeUser(user);
+	public UserDto removeUser(Principal principal, @PathVariable String user) {
+		if (!(principal.getName().equals(user))) {
+			throw new Error("You can change only your information");
+		}
+		return loginService.removeUser(principal.getName());
 	}
 
 	@PutMapping("/user/{user}")
-	public UserDto updateUser(@PathVariable String user, @RequestBody UpdateNameDto updateNameDto) {
-		return loginService.updateUser(user, updateNameDto);
+	public UserDto updateUser(Principal principal, @RequestBody UpdateNameDto updateNameDto,
+			@PathVariable String user) {
+		if (!(principal.getName().equals(user))) {
+			throw new Error("You can change only your information");
+		}
+		return loginService.updateUser(principal.getName(), updateNameDto);
 	}
 
 	@PutMapping("/user/{user}/role/{role}")
@@ -71,10 +76,10 @@ public class LoginController {
 //	public void updatePassword(@RequestBody LoginAndChangePassDto loginAndChangePassDto) {
 //		loginService.updatePassword(loginAndChangePassDto);
 //	}
-	
+
 	@PutMapping("/user/password")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updatePassword(Principal principal, @RequestHeader ("X-Password") String newPassword) {
+	public void updatePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
 		loginService.updatePassword(principal.getName(), newPassword);
 	}
 

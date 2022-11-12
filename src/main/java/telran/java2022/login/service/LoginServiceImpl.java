@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import telran.java2022.login.dao.UserRepository;
 import telran.java2022.login.dto.AddRoleDto;
 import telran.java2022.login.dto.CreateUserDto;
-import telran.java2022.login.dto.LoginAndChangePassDto;
 import telran.java2022.login.dto.UpdateNameDto;
 import telran.java2022.login.dto.UserDto;
 import telran.java2022.login.dto.exception.UserAlreadyExistException;
@@ -29,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
 			throw new UserAlreadyExistException(createUserDto.getLogin());
 		}
 		User user = modelMapper.map(createUserDto, User.class);
-		String password  = BCrypt.hashpw(createUserDto.getPassword(), BCrypt.gensalt());
+		String password = BCrypt.hashpw(createUserDto.getPassword(), BCrypt.gensalt());
 		user.setPassword(password);
 		user.addRole("USER");
 		user = userRepository.save(user);
@@ -68,7 +67,7 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public AddRoleDto addRole(String login, String role) {
 		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
-		user.addRole(role);
+		user.addRole(role.toUpperCase());
 		userRepository.save(user);
 		return modelMapper.map(user, AddRoleDto.class);
 	}
@@ -83,12 +82,10 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public void updatePassword(String login, String newPassword) {
-		User user = userRepository.findById(login)
-				.orElseThrow(() -> new UserNotFoundException(login));
-		String password  = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		String password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 		user.setPassword(password);
 		userRepository.save(user);
 	}
-	
 
 }

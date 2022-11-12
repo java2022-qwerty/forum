@@ -43,8 +43,7 @@ public class AuthenticationFilter implements Filter {
 			} catch (Exception e) {
 				response.sendError(401, "Invalid token");
 			}
-			User user = userRepository.findById(credentials[0])
-					.orElse(null);
+			User user = userRepository.findById(credentials[0]).orElse(null);
 //			boolean checkAuth = user.getPassword().equals(credentials[1]);
 //			boolean checkRole = user.getRoles().contains("USER");
 			if (token == null || !BCrypt.checkpw(credentials[1], user.getPassword())) {
@@ -64,7 +63,12 @@ public class AuthenticationFilter implements Filter {
 	}
 
 	private boolean checkEndPoint(String method, String servletPath) {
-		return !("POST".equalsIgnoreCase(method) && servletPath.matches("/account/register/?"));
+
+		boolean searhingForEveryone = (("GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method))
+				&& (servletPath.matches("/forum/posts/\\w+/?") || (servletPath.matches("/forum/posts/author/\\w+/?"))));
+		boolean newPost = "POST".equalsIgnoreCase(method) && servletPath.matches("/account/register/?");
+
+		return !searhingForEveryone;
 	}
 
 	private class WrappedRequest extends HttpServletRequestWrapper {
@@ -74,9 +78,10 @@ public class AuthenticationFilter implements Filter {
 			super(request);
 			this.login = login;
 		}
+
 		@Override
 		public Principal getUserPrincipal() {
-			return ()->login;
+			return () -> login;
 		}
 	}
 }

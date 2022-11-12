@@ -18,10 +18,9 @@ import telran.java2022.login.dao.UserRepository;
 import telran.java2022.login.model.User;
 
 @Component
-@Order(20)
+@Order(30)
 @RequiredArgsConstructor
-public class AdminFilter implements Filter {
-
+public class ModeratorFilter implements Filter {
 	final UserRepository userRepository;
 
 	@Override
@@ -30,9 +29,10 @@ public class AdminFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
+
 			User user = userRepository.findById(request.getUserPrincipal().getName()).get();
-			if (!user.getRoles().contains("ADMINISTRATOR".toUpperCase())) {
-				response.sendError(403, "You don`t have permission to do it, only ADMINISTRATOR");
+			if (!user.getRoles().contains("MODERATOR".toUpperCase())) {
+				response.sendError(403, "You don`t have permission to do it, only MODERATOR or author");
 				return;
 			}
 		}
@@ -40,8 +40,6 @@ public class AdminFilter implements Filter {
 	}
 
 	private boolean checkEndPoint(String method, String servletPath) {
-		return (servletPath.matches("/account/user/\\w+/role/\\w+/?")
-				|| (servletPath.matches("/account/user/\\w+/?") && "DELETE".equalsIgnoreCase(method)));
+		return (servletPath.matches("/forum/post/\\w+/?") && "DELETE".equalsIgnoreCase(method));
 	}
-
 }
