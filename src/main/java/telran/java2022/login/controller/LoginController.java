@@ -1,5 +1,6 @@
 package telran.java2022.login.controller;
 
+import java.security.Principal;
 import java.util.Base64;
 
 import org.springframework.http.HttpStatus;
@@ -34,11 +35,15 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public UserDto loginUser(@RequestHeader("Authorization") String token) {
-		String[] basicAuthStrings = token.split(" ");
-		String decode = new String(Base64.getDecoder().decode(basicAuthStrings[1]));
-		String[] credential = decode.split(":");
-		return loginService.loginUser(credential[0]);
+//	public UserDto loginUser(@RequestHeader("Authorization") String token, Principal principal) {
+	public UserDto loginUser(Principal principal) {
+		System.out.println(principal.getName());
+//		String[] basicAuthStrings = token.split(" ");
+//		String decode = new String(Base64.getDecoder().decode(basicAuthStrings[1]));
+//		String[] credential = decode.split(":");
+//		return loginService.loginUser(credential[0]);
+		return loginService.loginUser(principal.getName());
+
 	}
 
 	@DeleteMapping("/user/{user}")
@@ -61,10 +66,16 @@ public class LoginController {
 		return loginService.removeRole(user, role);
 	}
 
+//	@PutMapping("/user/password")
+//	@ResponseStatus(HttpStatus.NO_CONTENT)
+//	public void updatePassword(@RequestBody LoginAndChangePassDto loginAndChangePassDto) {
+//		loginService.updatePassword(loginAndChangePassDto);
+//	}
+	
 	@PutMapping("/user/password")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updatePassword(@RequestBody LoginAndChangePassDto loginAndChangePassDto) {
-		loginService.updatePassword(loginAndChangePassDto);
+	public void updatePassword(Principal principal, @RequestHeader ("X-Password") String newPassword) {
+		loginService.updatePassword(principal.getName(), newPassword);
 	}
 
 }

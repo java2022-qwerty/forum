@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserDto {
+	public UserDto(String login2, String password, String lastName2, String string) {
+		// TODO Auto-generated constructor stub
+	}
 	String login;
 	String firstName;
 	String lastName;

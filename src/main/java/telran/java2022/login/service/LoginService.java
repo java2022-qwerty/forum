@@ -20,6 +20,8 @@ public interface LoginService {
 
 	AddRoleDto removeRole(String user, String role);
 
-	void updatePassword(LoginAndChangePassDto loginAndChangePassDto);
+//	void updatePassword(LoginAndChangePassDto loginAndChangePassDto);
+
+	void updatePassword(String name, String newPassword);
 
 }

@@ -1,5 +1,6 @@
 package telran.java2022.login.service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ public class LoginServiceImpl implements LoginService {
 			throw new UserAlreadyExistException(createUserDto.getLogin());
 		}
 		User user = modelMapper.map(createUserDto, User.class);
+		String password  = BCrypt.hashpw(createUserDto.getPassword(), BCrypt.gensalt());
+		user.setPassword(password);
 		user.addRole("USER");
 		user = userRepository.save(user);
 
@@ -79,11 +82,13 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void updatePassword(LoginAndChangePassDto loginAndChangePassDto) {
-		User user = userRepository.findById(loginAndChangePassDto.getLogin())
-				.orElseThrow(() -> new UserNotFoundException(loginAndChangePassDto.getLogin()));
-		user.setPassword(loginAndChangePassDto.getPassword());
+	public void updatePassword(String login, String newPassword) {
+		User user = userRepository.findById(login)
+				.orElseThrow(() -> new UserNotFoundException(login));
+		String password  = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+		user.setPassword(password);
 		userRepository.save(user);
 	}
+	
 
 }
