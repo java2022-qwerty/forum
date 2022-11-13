@@ -24,8 +24,10 @@ final	UserRepository userRepository;
 		if (!userRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			User user = new User("admin", password, "", "");
+			user.addRole("USER");
 			user.addRole("MODERATOR");
 			user.addRole("ADMINISTRATOR");
+
 			userRepository.save(user);
 		}
 	}

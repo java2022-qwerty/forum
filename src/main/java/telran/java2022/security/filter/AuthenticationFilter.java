@@ -67,8 +67,7 @@ public class AuthenticationFilter implements Filter {
 		boolean searhingForEveryone = (("GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method))
 				&& (servletPath.matches("/forum/posts/\\w+/?") || (servletPath.matches("/forum/posts/author/\\w+/?"))));
 		boolean newPost = "POST".equalsIgnoreCase(method) && servletPath.matches("/account/register/?");
-
-		return !searhingForEveryone;
+		return !searhingForEveryone&&!newPost;
 	}
 
 	private class WrappedRequest extends HttpServletRequestWrapper {

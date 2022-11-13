@@ -18,7 +18,7 @@ import telran.java2022.login.dao.UserRepository;
 import telran.java2022.login.model.User;
 
 @Component
-@Order(20)
+@Order(40)
 @RequiredArgsConstructor
 public class AdminFilter implements Filter {
 
@@ -31,7 +31,8 @@ public class AdminFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
 			User user = userRepository.findById(request.getUserPrincipal().getName()).get();
-			if (!user.getRoles().contains("ADMINISTRATOR".toUpperCase())) {
+
+			if (!user.getRoles().contains("ADMINISTRATOR".toUpperCase()) ) {
 				response.sendError(403, "You don`t have permission to do it, only ADMINISTRATOR");
 				return;
 			}

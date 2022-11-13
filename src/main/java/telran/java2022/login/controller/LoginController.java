@@ -35,7 +35,6 @@ public class LoginController {
 	@PostMapping("/login")
 //	public UserDto loginUser(@RequestHeader("Authorization") String token, Principal principal) {
 	public UserDto loginUser(Principal principal) {
-		System.out.println(principal.getName());
 //		String[] basicAuthStrings = token.split(" ");
 //		String decode = new String(Base64.getDecoder().decode(basicAuthStrings[1]));
 //		String[] credential = decode.split(":");
@@ -45,20 +44,14 @@ public class LoginController {
 	}
 
 	@DeleteMapping("/user/{user}")
-	public UserDto removeUser(Principal principal, @PathVariable String user) {
-		if (!(principal.getName().equals(user))) {
-			throw new Error("You can change only your information");
-		}
-		return loginService.removeUser(principal.getName());
+	public UserDto removeUser(@PathVariable String user) {
+		return loginService.removeUser(user);
 	}
 
 	@PutMapping("/user/{user}")
-	public UserDto updateUser(Principal principal, @RequestBody UpdateNameDto updateNameDto,
+	public UserDto updateUser(@RequestBody UpdateNameDto updateNameDto,
 			@PathVariable String user) {
-		if (!(principal.getName().equals(user))) {
-			throw new Error("You can change only your information");
-		}
-		return loginService.updateUser(principal.getName(), updateNameDto);
+		return loginService.updateUser(user, updateNameDto);
 	}
 
 	@PutMapping("/user/{user}/role/{role}")
