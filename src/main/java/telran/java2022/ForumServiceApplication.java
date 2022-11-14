@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import lombok.RequiredArgsConstructor;
 import telran.java2022.login.dao.UserRepository;
-import telran.java2022.login.model.User;
+import telran.java2022.login.model.UserAccount;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ final	UserRepository userRepository;
 	public void run(String... args) throws Exception {
 		if (!userRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
-			User user = new User("admin", password, "", "");
+			UserAccount user = new UserAccount("admin", password, "", "");
 			user.addRole("USER");
 			user.addRole("MODERATOR");
 			user.addRole("ADMINISTRATOR");

@@ -14,29 +14,33 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import telran.java2022.login.dao.UserRepository;
-import telran.java2022.login.model.User;
-import telran.java2022.post.dao.PostRepository;
+import telran.java2022.security.context.SecurityContext;
+import telran.java2022.security.context.User;
 
 @Component
-@Order(20)
+@Order(10)
 @RequiredArgsConstructor
 public class UserFilter implements Filter {
 
-	final UserRepository userRepository;
-	final PostRepository postRepository;
+//	final UserRepository userRepository;
+	final SecurityContext context;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
+		String path = request.getServletPath();
 
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
 			String name = request.getUserPrincipal().getName();
-			String path = "/account/user/"+name+"/?";
-			User user = userRepository.findById(request.getUserPrincipal().getName()).get();
-			if((!request.getServletPath().matches(path) &&!user.getRoles().contains("Administrator".toUpperCase()))){
+			String[] arr = path.split("/");
+			String userName = arr[arr.length - 1];
+			
+//			UserAccount user = userRepository.findById(request.getUserPrincipal().getName()).get();
+			User user = context.getUser(request.getUserPrincipal().getName());
+
+			if(!userName.equals(name)){
 				throw new Error("You don`t have permission to do it");
 			}
 			if (!user.getRoles().contains("USER".toUpperCase())) {
@@ -49,28 +53,11 @@ public class UserFilter implements Filter {
 
 	private boolean checkEndPoint(String method, String servletPath) {
 
-		boolean login = servletPath.matches("/account/login/?") && "POST".equalsIgnoreCase(method);
 		boolean removeUser = servletPath.matches("/account/user/\\w+/?") && "DELETE".equalsIgnoreCase(method);
 		boolean updateUser = servletPath.matches( "/account/user/\\w+/?") && "PUT".equalsIgnoreCase(method);
-		System.out.println(removeUser);
-		System.out.println(servletPath);
-		boolean updatePassUser = servletPath.matches("/account/password/?") && "PUT".equalsIgnoreCase(method);
+		boolean post = servletPath.matches("/forum/post/\\w+/?") && "Post".equalsIgnoreCase(method);
+		boolean addCommentPost = servletPath.matches("/forum/post/\\w+/comment/\\w+/?");
 
-		boolean newPost = servletPath.matches("/forum/post/\\w+/?") && "POST".equalsIgnoreCase(method);
-		boolean getPost = servletPath.matches("/forum/post/\\w+/?") && "GET".equalsIgnoreCase(method);
-		boolean delPost = servletPath.matches("/forum/post/\\w+/?") && "DEL".equalsIgnoreCase(method);
-		boolean updatePost = servletPath.matches("/forum/post/\\w+/?") && "PUT".equalsIgnoreCase(method);
-		boolean addLikePost = servletPath.matches("/forum/post/\\w+/like/?") && "PUT".equalsIgnoreCase(method);
-		boolean addCommentPost = servletPath.matches("/forum/post/\\w+/comment/\\w+/?")
-				&& "PUT".equalsIgnoreCase(method);
-		
-		
-//		String author = postRepository.findById(name).get().getAuthor();
-//		if(newPost&&servletPath.matches("/forum/post/"+author+"/?")) {
-//			
-//		}
-		
-		return login || removeUser || updateUser || updatePassUser || newPost || getPost || delPost || updatePost
-				|| addLikePost || addCommentPost;
+		return removeUser || updateUser|| addCommentPost||post ;
 	}
 }

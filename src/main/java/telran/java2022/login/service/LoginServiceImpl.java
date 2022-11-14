@@ -12,7 +12,7 @@ import telran.java2022.login.dto.UpdateNameDto;
 import telran.java2022.login.dto.UserDto;
 import telran.java2022.login.dto.exception.UserAlreadyExistException;
 import telran.java2022.login.dto.exception.UserNotFoundException;
-import telran.java2022.login.model.User;
+import telran.java2022.login.model.UserAccount;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class LoginServiceImpl implements LoginService {
 		if (!userExist) {
 			throw new UserAlreadyExistException(createUserDto.getLogin());
 		}
-		User user = modelMapper.map(createUserDto, User.class);
+		UserAccount user = modelMapper.map(createUserDto, UserAccount.class);
 		String password = BCrypt.hashpw(createUserDto.getPassword(), BCrypt.gensalt());
 		user.setPassword(password);
 		user.addRole("USER");
@@ -38,20 +38,20 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public UserDto loginUser(String login) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
 	public UserDto removeUser(String login) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		userRepository.delete(user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
 	public UserDto updateUser(String login, UpdateNameDto updateNameDto) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		String firstName = updateNameDto.getFirstName();
 		if (firstName != null) {
 			user.setFirstName(updateNameDto.getFirstName());
@@ -66,7 +66,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public AddRoleDto addRole(String login, String role) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		user.addRole(role.toUpperCase());
 		userRepository.save(user);
 		return modelMapper.map(user, AddRoleDto.class);
@@ -74,7 +74,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public AddRoleDto removeRole(String login, String role) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		user.removeRole(role);
 		userRepository.save(user);
 		return modelMapper.map(user, AddRoleDto.class);
@@ -82,7 +82,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public void updatePassword(String login, String newPassword) {
-		User user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
+		UserAccount user = userRepository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
 		String password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 		user.setPassword(password);
 		userRepository.save(user);

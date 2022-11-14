@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import telran.java2022.login.model.User;
 import telran.java2022.post.dao.PostRepository;
 import telran.java2022.post.dto.DatePeriodDto;
 import telran.java2022.post.dto.NewCommentDto;
 import telran.java2022.post.dto.NewPostDto;
 import telran.java2022.post.dto.PostDto;
-import telran.java2022.post.model.Post;
 import telran.java2022.post.service.PostService;
 
 @RestController
@@ -33,56 +31,33 @@ public class PostController {
 
 	@PostMapping("/post/{author}")
 	public PostDto addPost(@RequestBody NewPostDto newPost, @PathVariable String author, Principal principal) {
-		if (!(principal.getName().equals(author))) {
-			throw new Error("You must create post only with your name");
-		}
 		return service.addNewPost(newPost, principal.getName());
 	}
 
 	@GetMapping("/post/{id}")
 	public PostDto getPost(@PathVariable String id, Principal principal) {
-		Post post = postRepository.findById(id).get();
-		if(!(principal.getName().equals(post.getAuthor()))) {
-			throw new Error("You can get only your post");
-		}
 		return service.getPost(id);
 	}
 
 	@DeleteMapping("/post/{id}")
 	public PostDto removePost(@PathVariable String id, Principal principal) {
-		Post post = postRepository.findById(id).get();
-		if(!(principal.getName().equals(post.getAuthor()))) {
-			throw new Error("You can remove only your post");
-		}
 		return service.removePost(id);
 	}
 
 	@PutMapping("/post/{id}")
 	public PostDto updatePost(@PathVariable String id, @RequestBody NewPostDto postUpdateDto, Principal principal) {
-		Post post = postRepository.findById(id).get();
-		if(!(principal.getName().equals(post.getAuthor()))) {
-			throw new Error("You can update only your post");
-		}
 		return service.updatePost(postUpdateDto, id);
 	}
 
 	@PutMapping("/post/{id}/like")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void addLike(@PathVariable String id, Principal principal) {
-		Post post = postRepository.findById(id).get();
-		if(!(principal.getName().equals(post.getAuthor()))) {
-			throw new Error("You can put like only to your post");
-		}
 		service.addLike(id);
 	}
 
 	@PutMapping("/post/{id}/comment/{author}")
 	public PostDto addComment(@PathVariable String id, @PathVariable String author,
 			@RequestBody NewCommentDto newCommentDto, Principal principal) {
-		Post post = postRepository.findById(id).get();
-		if(!(principal.getName().equals(post.getAuthor()))) {
-			throw new Error("You can put like only to your post");
-		}
 		return service.addComment(id, author, newCommentDto);
 	}
 
