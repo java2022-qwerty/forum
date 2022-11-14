@@ -18,7 +18,7 @@ import telran.java2022.security.context.SecurityContext;
 import telran.java2022.security.context.User;
 
 @Component
-@Order(10)
+@Order(15)
 @RequiredArgsConstructor
 public class UserFilter implements Filter {
 
