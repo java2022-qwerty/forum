@@ -44,36 +44,39 @@ public class AuthenticationFilter implements Filter {
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
 			String sessionId = request.getSession().getId();
 
-			UserAccount userAccount = sessionService.getUser(sessionId);
-			if(userAccount == null) {
+//			UserAccount userAccount = sessionService.getUser(sessionId);
+//			if(userAccount == null) {
+
 			String token = request.getHeader("Authorization");
+			if (token != null) {
 
-			String[] credentials = null;
+				String[] credentials = null;
 
-			try {
-				credentials = getCredentialFromToken(token);
-			} catch (Exception e) {
-				response.sendError(401, "Invalid token");
-			}
-			
-//			UserAccount userAccount = userRepository.findById(credentials[0]).orElse(null);
-			 userAccount = userRepository.findById(credentials[0]).orElse(null);
+				try {
+					credentials = getCredentialFromToken(token);
+				} catch (Exception e) {
+					response.sendError(401, "Invalid token");
+				}
+
+				UserAccount userAccount = userRepository.findById(credentials[0]).orElse(null);
+//							userAccount = userRepository.findById(credentials[0]).orElse(null);
 
 //				boolean checkAuth = user.getPassword().equals(credentials[1]);
 //				boolean checkRole = user.getRoles().contains("USER");
-			if (token == null || !BCrypt.checkpw(credentials[1], userAccount.getPassword())) {
-				response.sendError(401, "Wrong credentials");
-				return;
-			}
+				if (token == null || !BCrypt.checkpw(credentials[1], userAccount.getPassword())) {
+					response.sendError(401, "Wrong credentials");
+					return;
+				}
+
 				sessionService.addUser(sessionId, userAccount);
 			}
+			UserAccount userAccount = sessionService.getUser(sessionId);
+			
+//			}
 
 			request = new WrappedRequest(request, userAccount.getLogin());
-			User user = User.builder()
-					.userName(userAccount.getLogin())
-					.password(userAccount.getPassword())
-					.roles(userAccount.getRoles())
-					.build();
+			User user = User.builder().userName(userAccount.getLogin()).password(userAccount.getPassword())
+					.roles(userAccount.getRoles()).build();
 			context.addUser(user);
 		}
 		chain.doFilter(request, response);
